@@ -1,5 +1,7 @@
 package kr.r2lab.myslackalarmbot.slack
 
+import java.util.*
+
 /**
  * Created by gyeshinwon on 2016. 10. 29..
  *
@@ -17,5 +19,6 @@ class SlackPostDTO {
     var mrkdwn: Boolean = true
     var channel: String = "#general"
     var text: String = ""
+    var sendDate: Date? = null
     fun toSlackPost() = SlackPost(username, mrkdwn, channel, text)
 }

@@ -21,6 +21,7 @@ constructor(
     }
 
     fun sendMessage(message: SlackPostDTO): Boolean {
+        println(message.sendDate)
         val response = try {
             restTemplate.postForEntity(message.webhookUrl, message.toSlackPost(), String::class.java)
         } catch (e: Exception) {

@@ -24,6 +24,9 @@
             padding: 40px 15px;
             text-align: center;
         }
+        .popover{
+            max-width: 100%; /* Max Width of the popover (depending on the container!) */
+        }
     </style>
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
@@ -34,23 +37,31 @@
     <script src="./bower_components/jquery/dist/jquery.min.js"></script>
     <script>
         $(function () {
-            $('#webhookPopoverId').popover();
+            $('#webhookPopoverId').popover({
+                container: 'body'
+            });
         });
 
         function clickSendBtn() {
             var radio = $(':radio[name="inlineRadioOptions"]:checked').val();
             var radioBool = radio == "Y";
 
+            var temp = Date.parse($("#sendTime").val());
+            var d = new Date(temp);
+
             var obj = {
                 webhookUrl : $("#webhookUrl").val(),
                 username : $("#username").val(),
                 channel : $("#channel").val(),
                 text : $("#message").val(),
+                sendDate: d,
                 mrkdwn :  radioBool,
                 validate : function() {
                     return obj.webhookUrl && obj.channel && obj.text;
                 }
             };
+
+
             if(obj.validate()) {
                 jQuery.ajax({
                     type:"POST",
@@ -110,7 +121,7 @@
                 <div class="form-group">
                     <label for="webhookUrl" class="col-sm-2 control-label">
                         WebHook URL
-                        <button type="button" id="webhookPopoverId" class="btn btn-xs btn-info" data-toggle="popover" title="Webhook url?" data-content="[Ref] https://{youdomain}.slack.com/apps/new/A0F7XDUAZ-incoming-webhooks">i</button>
+                        <button type="button" id="webhookPopoverId" class="btn btn-xs btn-info" data-toggle="popover" title="Webhook url?" data-content="To see https://{youdomain}.slack.com/apps/new/A0F7XDUAZ-incoming-webhooks">i</button>
                     </label>
                     <div class="col-sm-10">
                         <input type="url" class="form-control" id="webhookUrl" placeholder="https://hooks.slack.com/services/xxxx/xxxx/xxx">
@@ -138,6 +149,13 @@
                 </div>
 
                 <div class="form-group">
+                    <label for="sendTime" class="col-sm-2 control-label">sendTime</label>
+                    <div class="col-sm-10">
+                        <input type="datetime-local" id="sendTime">
+                    </div>
+                </div>
+
+                <div class="form-group">
                     <label for="inlineRadio1" class="col-sm-2 control-label">MarkDown</label>
                     <div class="col-sm-10 text-left">
                         <label class="radio-inline">
@@ -152,7 +170,7 @@
 
                 <div class="form-group">
                     <div class="">
-                        <button id="sendBtn" onclick="clickSendBtn()" class="btn btn-default">Send Message</button>
+                        <button type="button" id="sendBtn" onclick="clickSendBtn()" class="btn btn-default">Send Message</button>
                     </div>
                 </div>
             </form>
