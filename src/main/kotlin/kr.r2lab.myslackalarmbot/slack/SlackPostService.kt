@@ -16,8 +16,6 @@ constructor(
         val restTemplate: RestTemplate
 )
 {
-    val url = "https://hooks.slack.com/services/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"
-
     fun hello(): String {
         return "hello"
     }
