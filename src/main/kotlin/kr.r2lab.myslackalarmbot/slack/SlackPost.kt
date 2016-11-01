@@ -13,12 +13,13 @@ data class SlackPost(
     val text: String
 )
 
-class SlackPostDTO {
-    var webhookUrl: String = ""
-    var username: String = ""
-    var mrkdwn: Boolean = true
-    var channel: String = "#general"
-    var text: String = ""
+class SlackPostDTO (
+    var webhookUrl: String = "",
+    var username: String = "",
+    var mrkdwn: Boolean = true,
+    var channel: String = "#general",
+    var text: String = "",
     var sendDate: Date? = null
+){
     fun toSlackPost() = SlackPost(username, mrkdwn, channel, text)
 }

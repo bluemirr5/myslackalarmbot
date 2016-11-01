@@ -2,6 +2,7 @@ package kr.r2lab.myslackalarmbot.slack
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
+import org.springframework.scheduling.TaskScheduler
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate
 
@@ -13,15 +14,20 @@ import org.springframework.web.client.RestTemplate
 class SlackPostService
 @Autowired
 constructor(
-        val restTemplate: RestTemplate
+    val restTemplate: RestTemplate,
+    val taskScheduler: TaskScheduler
 )
 {
     fun hello(): String {
         return "hello"
     }
 
+    fun sendScheduledMessage(message: SlackPostDTO): Boolean {
+        taskScheduler.schedule({sendMessage(message)}, message.sendDate)
+        return true;
+    }
+
     fun sendMessage(message: SlackPostDTO): Boolean {
-        println(message.sendDate)
         val response = try {
             restTemplate.postForEntity(message.webhookUrl, message.toSlackPost(), String::class.java)
         } catch (e: Exception) {
