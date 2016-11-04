@@ -13,8 +13,15 @@ data class NormalSlackPost(
     val text: String
 )
 
-
 data class AttachmentSlackPost(
+    val username: String = "",
+    val mrkdwn: Boolean = true,
+    val channel: String = "#general",
+    val attachments: List<Attachment>
+)
+
+
+data class Attachment(
     val fallback: String,
     val color: String,
     val pretext: String,
@@ -38,7 +45,7 @@ data class AttachmentSlackPostField(
     val short: Boolean
 )
 
-class SlackPostDTO (
+class NormalSlackPostDTO(
     var webhookUrl: String = "",
     var username: String = "",
     var mrkdwn: Boolean = true,
@@ -48,3 +55,12 @@ class SlackPostDTO (
 ){
     fun toSlackPost() = NormalSlackPost(username, mrkdwn, channel, text)
 }
+
+data class AttachmentSlackPostDTO(
+    var webhookUrl: String = "",
+    var username: String = "",
+    var mrkdwn: Boolean = true,
+    var channel: String = "#general",
+    var sendDate: Date? = null,
+    val attachments: List<Attachment>
+)

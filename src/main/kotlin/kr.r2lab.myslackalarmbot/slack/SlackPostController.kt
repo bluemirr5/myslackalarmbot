@@ -22,7 +22,7 @@ class SlackPostController
     }
 
     @RequestMapping(value = "/sendSlackMessage", method = arrayOf(RequestMethod.POST))
-    fun sendMessage(@RequestBody message: SlackPostDTO) =
+    fun sendMessage(@RequestBody message: NormalSlackPostDTO) =
     if(message.sendDate == null)
         slackPostService.sendMessage(message)
     else

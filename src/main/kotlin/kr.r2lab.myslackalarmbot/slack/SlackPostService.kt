@@ -22,12 +22,12 @@ constructor(
         return "hello"
     }
 
-    fun sendScheduledMessage(message: SlackPostDTO): Boolean {
+    fun sendScheduledMessage(message: NormalSlackPostDTO): Boolean {
         taskScheduler.schedule({sendMessage(message)}, message.sendDate)
         return true;
     }
 
-    fun sendMessage(message: SlackPostDTO): Boolean {
+    fun sendMessage(message: NormalSlackPostDTO): Boolean {
         val response = try {
             restTemplate.postForEntity(message.webhookUrl, message.toSlackPost(), String::class.java)
         } catch (e: Exception) {
