@@ -27,4 +27,11 @@ class SlackPostController
         slackPostService.sendMessage(message)
     else
         slackPostService.sendScheduledMessage(message)
+
+    @RequestMapping(value = "/sendSlackMessageAttachment", method = arrayOf(RequestMethod.POST))
+    fun sendAttachmentMessage(@RequestBody message: AttachmentSlackPostDTO) =
+    if(message.sendDate == null)
+        slackPostService.sendMessage(message)
+    else
+        slackPostService.sendScheduledMessage(message)
 }

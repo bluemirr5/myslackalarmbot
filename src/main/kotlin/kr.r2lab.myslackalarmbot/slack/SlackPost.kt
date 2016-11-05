@@ -22,21 +22,21 @@ data class AttachmentSlackPost(
 
 
 data class Attachment(
-    val fallback: String,
-    val color: String,
-    val pretext: String,
-    val author_name: String,
-    val author_link: String,
-    val author_icon: String,
-    val title: String,
-    val title_link: String,
-    val text: String,
-    val image_url: String,
-    val thumb_url: String,
-    val footer: String,
-    val footer_icon: String,
-    val ts: Long,
-    val fields: List<AttachmentSlackPostField>
+    val fallback: String = "",
+    val color: String = "",
+    val pretext: String = "",
+    val author_name: String = "",
+    val author_link: String = "",
+    val author_icon: String = "",
+    val title: String = "",
+    val title_link: String = "",
+    val text: String = "",
+    val image_url: String = "",
+    val thumb_url: String = "",
+    val footer: String = "",
+    val footer_icon: String = "",
+    val ts: Long = -1,
+    val fields: List<AttachmentSlackPostField>  = listOf()
 )
 
 data class AttachmentSlackPostField(
@@ -62,5 +62,7 @@ data class AttachmentSlackPostDTO(
     var mrkdwn: Boolean = true,
     var channel: String = "#general",
     var sendDate: Date? = null,
-    val attachments: List<Attachment>
-)
+    val attachments: List<Attachment> = listOf()
+){
+    fun toSlackPost() = AttachmentSlackPost(username, mrkdwn, channel, attachments)
+}

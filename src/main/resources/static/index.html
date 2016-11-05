@@ -36,58 +36,101 @@
     <![endif]-->
     <script src="./bower_components/jquery/dist/jquery.min.js"></script>
     <script>
-        $(function () {
-            $('#webhookPopoverId').popover({
-                container: 'body'
-            });
-            $('#webhookPopoverId2').popover({
-                container: 'body'
-            });
-        });
-
-        function clickSendBtn() {
-            var offset = new Date().getTimezoneOffset();
-            var radio = $(':radio[name="inlineRadioOptions"]:checked').val();
-            var radioBool = radio == "Y";
-
-            var orgVal = $("#sendTime").val();
-            var temp = Date.parse(orgVal);
-
-            var d = new Date(temp + offset*60*1000);
-
-            var obj = {
-                webhookUrl : $("#webhookUrl").val(),
-                username : $("#username").val(),
-                channel : $("#channel").val(),
-                text : $("#message").val(),
-                sendDate: d,
-                mrkdwn :  radioBool,
-                validate : function() {
-                    return obj.webhookUrl && obj.channel && obj.text;
-                }
-            };
-
-
-            if(obj.validate()) {
-                jQuery.ajax({
-                    type:"POST",
-                    url:"/sendSlackMessage",
-                    contentType: "application/json; charset=UTF-8",
-                    data: JSON.stringify(obj),
-                    success : function(data) {
-                        alert("메시지 전송완료");
-                        $("#message").val('')
-                    },
-                    complete : function(data) {
-                    },
-                    error : function(xhr, status, error) {
-                        alert("메시지 전송실패 : " + status);
-                    }
+        $(document).ready(function() {
+            $(function () {
+                $('#webhookPopoverId').popover({
+                    container: 'body'
                 });
-            } else {
-                alert("need Data");
+                $('#webhookPopoverId2').popover({
+                    container: 'body'
+                });
+            });
+
+            var clicked = 'normal';
+            $('#myTabs a').click(function (e) {
+                e.preventDefault();
+                $(this).tab('show');
+                clicked = e.currentTarget.id;
+            });
+
+            $('#sendBtn').click(function (e) {
+                clickSendBtn();
+            });
+            function clickSendBtn() {
+                var offset = new Date().getTimezoneOffset();
+                var radio = $(':radio[name="inlineRadioOptions"]:checked').val();
+                var radioBool = radio == "Y";
+
+                var orgVal = $("#sendTime").val();
+                var temp = Date.parse(orgVal);
+
+                var d = new Date(temp + offset*60*1000);
+
+                var obj = {
+                    webhookUrl : $("#webhookUrl").val(),
+                    username : $("#username").val(),
+                    channel : $("#channel").val(),
+                    sendDate: d,
+                    mrkdwn :  radioBool
+                };
+
+                var url = '';
+                if(clicked == 'attachments-tab') {
+                    url = "/sendSlackMessageAttachment";
+                    var attachment = {
+                        fallback: $('#fallback').val(),
+                        color: $('#color').val(),
+                        pretext: $('#pretext').val(),
+                        author_name: $('#author_name').val(),
+                        author_link: $('#author_link').val(),
+                        author_icon: $('#author_icon').val(),
+                        title: $('#title').val(),
+                        title_link: $('#title_link').val(),
+                        text: $('#text').val(),
+                        image_url: $('#image_url').val(),
+                        thumb_url: $('#thumb_url').val(),
+                        footer: $('#footer').val(),
+                        footer_icon: $('#footer_icon').val()
+                    };
+
+                    obj.attachments = [];
+                    obj.attachments.push(attachment);
+
+                    obj.validate = function() {
+                        return obj.webhookUrl && obj.channel
+                                && attachment.pretext
+                                && attachment.title
+                                && attachment.text;
+                    }
+                } else {
+                    url = "/sendSlackMessage";
+                    obj.text = $("#message").val();
+                    obj.validate = function() {
+                        return obj.webhookUrl && obj.channel && obj.text;
+                    }
+                }
+
+                if(obj.validate()) {
+                    jQuery.ajax({
+                        type:"POST",
+                        url: url,
+                        contentType: "application/json; charset=UTF-8",
+                        data: JSON.stringify(obj),
+                        success : function(data) {
+                            alert("메시지 전송완료");
+                            $("#message").val('')
+                        },
+                        complete : function(data) {
+                        },
+                        error : function(xhr, status, error) {
+                            alert("메시지 전송실패 : " + status);
+                        }
+                    });
+                } else {
+                    alert("need Data");
+                }
             }
-        }
+        });
     </script>
 </head>
 
@@ -131,63 +174,61 @@
             </li>
         </ul>
 
-        <div class="tab-content" id="myTabContent" style="margin-top: 10px">
+        <div class="text-center center-block col-sm-12" style="margin-top: 10px">
+            <form class="form-horizontal">
+                <div class="form-group">
+                    <label for="webhookUrl" class="col-sm-2 control-label">
+                        WebHook URL
+                        <button type="button" id="webhookPopoverId" class="btn btn-xs btn-info" data-toggle="popover" title="Webhook url?" data-content="To see https://{youdomain}.slack.com/apps/new/A0F7XDUAZ-incoming-webhooks">i</button>
+                    </label>
+                    <div class="col-sm-10">
+                        <input type="url" class="form-control" id="webhookUrl" placeholder="https://hooks.slack.com/services/xxxx/xxxx/xxx">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="username" class="col-sm-2 control-label">Sender(NickName)</label>
+                    <div class="col-sm-10">
+                        <input class="form-control" id="username" placeholder="user name">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="channel" class="col-sm-2 control-label">Channel</label>
+                    <div class="col-sm-10">
+                        <input class="form-control" id="channel" placeholder="#general">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="sendTime" class="col-sm-2 control-label">SendTime</label>
+                    <div class="col-sm-10">
+                        <input type="datetime-local" id="sendTime">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="inlineRadio1" class="col-sm-2 control-label">MarkDown</label>
+                    <div class="col-sm-10 text-left">
+                        <label class="radio-inline">
+                            <input type="radio" name="inlineRadioOptions" id="inlineRadio1" checked value="Y"> Enable
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" name="inlineRadioOptions" id="inlineRadio2" value="N"> Disable
+                        </label>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+
+        <div class="tab-content" id="myTabContent">
             <div class="tab-pane fade active in" role="tabpanel" id="normal" aria-labelledby="normal-tab">
                 <div class="text-center center-block col-sm-12">
                     <form class="form-horizontal">
                         <div class="form-group">
-                            <label for="webhookUrl" class="col-sm-2 control-label">
-                                WebHook URL
-                                <button type="button" id="webhookPopoverId" class="btn btn-xs btn-info" data-toggle="popover" title="Webhook url?" data-content="To see https://{youdomain}.slack.com/apps/new/A0F7XDUAZ-incoming-webhooks">i</button>
-                            </label>
-                            <div class="col-sm-10">
-                                <input type="url" class="form-control" id="webhookUrl" placeholder="https://hooks.slack.com/services/xxxx/xxxx/xxx">
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="username" class="col-sm-2 control-label">Sender(NickName)</label>
-                            <div class="col-sm-10">
-                                <input class="form-control" id="username" placeholder="user name">
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="channel" class="col-sm-2 control-label">Channel</label>
-                            <div class="col-sm-10">
-                                <input class="form-control" id="channel" placeholder="#general">
-                            </div>
-                        </div>
-                        <div class="form-group">
                             <label for="message" class="col-sm-2 control-label">Message</label>
                             <div class="col-sm-10">
                                 <textarea id="message" class="form-control" rows="3"></textarea>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="sendTime" class="col-sm-2 control-label">SendTime</label>
-                            <div class="col-sm-10">
-                                <input type="datetime-local" id="sendTime">
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="inlineRadio1" class="col-sm-2 control-label">MarkDown</label>
-                            <div class="col-sm-10 text-left">
-                                <label class="radio-inline">
-                                    <input type="radio" name="inlineRadioOptions" id="inlineRadio1" checked value="Y"> Enable
-                                </label>
-                                <label class="radio-inline">
-                                    <input type="radio" name="inlineRadioOptions" id="inlineRadio2" value="N"> Disable
-                                </label>
-                            </div>
-
-                        </div>
-
-                        <div class="form-group">
-                            <div class="">
-                                <button type="button" id="sendBtn" onclick="clickSendBtn()" class="btn btn-default">Send Message</button>
                             </div>
                         </div>
                     </form>
@@ -197,47 +238,93 @@
                 <div class="text-center center-block col-sm-12">
                     <form class="form-horizontal">
                         <div class="form-group">
-                            <label for="webhookUrl2" class="col-sm-2 control-label">
-                                WebHook URL
-                                <button type="button" id="webhookPopoverId2" class="btn btn-xs btn-info" data-toggle="popover" title="Webhook url?" data-content="To see https://{youdomain}.slack.com/apps/new/A0F7XDUAZ-incoming-webhooks">i</button>
-                            </label>
+                            <label for="color" class="col-sm-2 control-label">Color</label>
                             <div class="col-sm-10">
-                                <input type="url" class="form-control" id="webhookUrl2" placeholder="https://hooks.slack.com/services/xxxx/xxxx/xxx">
+                                <input class="form-control" id="color" placeholder="">
                             </div>
                         </div>
-
                         <div class="form-group">
-                            <label for="username2" class="col-sm-2 control-label">Sender(NickName)</label>
+                            <label for="pretext" class="col-sm-2 control-label">PreText</label>
                             <div class="col-sm-10">
-                                <input class="form-control" id="username2" placeholder="user name">
+                                <input class="form-control" id="pretext" placeholder="">
                             </div>
                         </div>
-
                         <div class="form-group">
-                            <label for="channel2" class="col-sm-2 control-label">Channel</label>
+                            <label for="author_name" class="col-sm-2 control-label">Author Name</label>
                             <div class="col-sm-10">
-                                <input class="form-control" id="channel2" placeholder="#general">
+                                <input class="form-control" id="author_name" placeholder="">
                             </div>
                         </div>
-
-
                         <div class="form-group">
-                            <label for="sendTime2" class="col-sm-2 control-label">SendTime</label>
+                            <label for="author_link" class="col-sm-2 control-label">Author Link</label>
                             <div class="col-sm-10">
-                                <input type="datetime-local" id="sendTime2">
+                                <input class="form-control" id="author_link" placeholder="">
                             </div>
                         </div>
-
                         <div class="form-group">
-                            <div class="">
-                                <button type="button" id="sendBtn2" onclick="clickSendBtn()" class="btn btn-default">Send Message</button>
+                            <label for="author_icon" class="col-sm-2 control-label">Author Icon</label>
+                            <div class="col-sm-10">
+                                <input class="form-control" id="author_icon" placeholder="">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="title" class="col-sm-2 control-label">Title</label>
+                            <div class="col-sm-10">
+                                <input class="form-control" id="title" placeholder="">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="text" class="col-sm-2 control-label">Text</label>
+                            <div class="col-sm-10">
+                                <input class="form-control" id="text" placeholder="">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="image_url" class="col-sm-2 control-label">Image Url</label>
+                            <div class="col-sm-10">
+                                <input class="form-control" id="image_url" placeholder="">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="thumb_url" class="col-sm-2 control-label">Thumb Url</label>
+                            <div class="col-sm-10">
+                                <input class="form-control" id="thumb_url" placeholder="">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="footer" class="col-sm-2 control-label">Footer</label>
+                            <div class="col-sm-10">
+                                <input class="form-control" id="footer" placeholder="">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="footer_icon" class="col-sm-2 control-label">Footer Icon</label>
+                            <div class="col-sm-10">
+                                <input class="form-control" id="footer_icon" placeholder="">
                             </div>
                         </div>
                     </form>
+                    <!--val fallback: String,-->
+                    <!--val author_name: String,-->
+                    <!--val author_link: String,-->
+                    <!--val author_icon: String,-->
+                    <!--val title: String,-->
+                    <!--val title_link: String,-->
+                    <!--val text: String,-->
+                    <!--val image_url: String,-->
+                    <!--val thumb_url: String,-->
+                    <!--val footer: String,-->
+                    <!--val footer_icon: String,-->
+                    <!--val ts: Long,-->
+                    <!--val fields: List<AttachmentSlackPostField>-->
                 </div>
             </div>
         </div>
-
+        <div class="form-group">
+            <div class="">
+                <button type="button" id="sendBtn" class="btn btn-default">Send Message</button>
+            </div>
+        </div>
 
     </div>
 

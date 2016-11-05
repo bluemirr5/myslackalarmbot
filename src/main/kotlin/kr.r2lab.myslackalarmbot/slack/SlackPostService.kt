@@ -24,10 +24,26 @@ constructor(
 
     fun sendScheduledMessage(message: NormalSlackPostDTO): Boolean {
         taskScheduler.schedule({sendMessage(message)}, message.sendDate)
-        return true;
+        return true
+    }
+
+    fun sendScheduledMessage(message: AttachmentSlackPostDTO): Boolean {
+        taskScheduler.schedule({sendMessage(message)}, message.sendDate)
+        return true
     }
 
     fun sendMessage(message: NormalSlackPostDTO): Boolean {
+        val response = try {
+            restTemplate.postForEntity(message.webhookUrl, message.toSlackPost(), String::class.java)
+        } catch (e: Exception) {
+            println(e)
+            null
+        }
+        return response != null && response.statusCode == HttpStatus.OK &&
+                response.body == "ok"
+    }
+
+    fun sendMessage(message: AttachmentSlackPostDTO): Boolean {
         val response = try {
             restTemplate.postForEntity(message.webhookUrl, message.toSlackPost(), String::class.java)
         } catch (e: Exception) {
