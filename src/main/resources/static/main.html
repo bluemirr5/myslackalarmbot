@@ -10,127 +10,23 @@
     <meta name="author" content="">
     <link rel="icon" href="../../favicon.ico">
 
-    <title>Starter Template for Bootstrap</title>
+    <title>My Slack Bot</title>
 
     <!-- Bootstrap core CSS -->
     <link href="./bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
-    <style>
-        body {
-            padding-top: 50px;
-        }
-        .starter-template {
-            padding: 40px 15px;
-            text-align: center;
-        }
-        .popover{
-            max-width: 100%; /* Max Width of the popover (depending on the container!) */
-        }
-    </style>
+    <link href="./css/common.css" rel="stylesheet">
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
     <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
     <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
+
     <script src="./bower_components/jquery/dist/jquery.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            $(function () {
-                $('#webhookPopoverId').popover({
-                    container: 'body'
-                });
-                $('#webhookPopoverId2').popover({
-                    container: 'body'
-                });
-            });
+    <script src="./js/main.js">
 
-            var clicked = 'normal';
-            $('#myTabs a').click(function (e) {
-                e.preventDefault();
-                $(this).tab('show');
-                clicked = e.currentTarget.id;
-            });
-
-            $('#sendBtn').click(function (e) {
-                clickSendBtn();
-            });
-            function clickSendBtn() {
-                var offset = new Date().getTimezoneOffset();
-                var radio = $(':radio[name="inlineRadioOptions"]:checked').val();
-                var radioBool = radio == "Y";
-
-                var orgVal = $("#sendTime").val();
-                var temp = Date.parse(orgVal);
-
-                var d = new Date(temp + offset*60*1000);
-
-                var obj = {
-                    webhookUrl : $("#webhookUrl").val(),
-                    username : $("#username").val(),
-                    channel : $("#channel").val(),
-                    sendDate: d,
-                    mrkdwn :  radioBool
-                };
-
-                var url = '';
-                if(clicked == 'attachments-tab') {
-                    url = "/sendSlackMessageAttachment";
-                    var attachment = {
-                        fallback: $('#fallback').val(),
-                        color: $('#color').val(),
-                        pretext: $('#pretext').val(),
-                        author_name: $('#author_name').val(),
-                        author_link: $('#author_link').val(),
-                        author_icon: $('#author_icon').val(),
-                        title: $('#title').val(),
-                        title_link: $('#title_link').val(),
-                        text: $('#text').val(),
-                        image_url: $('#image_url').val(),
-                        thumb_url: $('#thumb_url').val(),
-                        footer: $('#footer').val(),
-                        footer_icon: $('#footer_icon').val()
-                    };
-
-                    obj.attachments = [];
-                    obj.attachments.push(attachment);
-
-                    obj.validate = function() {
-                        return obj.webhookUrl && obj.channel
-                                && attachment.pretext
-                                && attachment.title
-                                && attachment.text;
-                    }
-                } else {
-                    url = "/sendSlackMessage";
-                    obj.text = $("#message").val();
-                    obj.validate = function() {
-                        return obj.webhookUrl && obj.channel && obj.text;
-                    }
-                }
-
-                if(obj.validate()) {
-                    jQuery.ajax({
-                        type:"POST",
-                        url: url,
-                        contentType: "application/json; charset=UTF-8",
-                        data: JSON.stringify(obj),
-                        success : function(data) {
-                            alert("메시지 전송완료");
-                            $("#message").val('')
-                        },
-                        complete : function(data) {
-                        },
-                        error : function(xhr, status, error) {
-                            alert("메시지 전송실패 : " + status);
-                        }
-                    });
-                } else {
-                    alert("need Data");
-                }
-            }
-        });
     </script>
 </head>
 
@@ -208,7 +104,7 @@
 
                 <div class="form-group">
                     <label for="inlineRadio1" class="col-sm-2 control-label">MarkDown</label>
-                    <div class="col-sm-10 text-left">
+                    <div class="col-sm-10">
                         <label class="radio-inline">
                             <input type="radio" name="inlineRadioOptions" id="inlineRadio1" checked value="Y"> Enable
                         </label>
@@ -216,7 +112,6 @@
                             <input type="radio" name="inlineRadioOptions" id="inlineRadio2" value="N"> Disable
                         </label>
                     </div>
-
                 </div>
             </form>
         </div>
@@ -304,19 +199,6 @@
                             </div>
                         </div>
                     </form>
-                    <!--val fallback: String,-->
-                    <!--val author_name: String,-->
-                    <!--val author_link: String,-->
-                    <!--val author_icon: String,-->
-                    <!--val title: String,-->
-                    <!--val title_link: String,-->
-                    <!--val text: String,-->
-                    <!--val image_url: String,-->
-                    <!--val thumb_url: String,-->
-                    <!--val footer: String,-->
-                    <!--val footer_icon: String,-->
-                    <!--val ts: Long,-->
-                    <!--val fields: List<AttachmentSlackPostField>-->
                 </div>
             </div>
         </div>
