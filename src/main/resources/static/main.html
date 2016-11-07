@@ -25,35 +25,16 @@
     <![endif]-->
 
     <script src="./bower_components/jquery/dist/jquery.min.js"></script>
-    <script src="./js/main.js">
+    <script src="./bower_components/react/react.js"></script>
+    <script src="./bower_components/react/react-dom.js"></script>
+    <script src="./bower_components/babel/browser.min.js"></script>
 
-    </script>
+    <script src="./js/common.js" type="text/babel"></script>
+    <script src="./js/main.js" type="text/babel"></script>
 </head>
 
 <body>
-<div>
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="#">My Slack Alarm Bot</a>
-            </div>
-            <div id="navbar" class="collapse navbar-collapse">
-                <ul class="nav navbar-nav">
-                    <li class="active"><a href="#">Test Page</a></li>
-                    <li><a href="#about">준비1</a></li>
-                    <li><a href="#contact">준비2</a></li>
-                </ul>
-            </div><!--/.nav-collapse -->
-        </div>
-    </nav>
-</div>
-
+<div id="menu"></div>
 
 <div class="container">
 
