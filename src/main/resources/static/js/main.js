@@ -2,6 +2,12 @@
  * Created by gyeshinwon on 2016. 11. 7..
  *
  */
+var babel = require('babel');
+var react = require('react');
+var reactDOM = require('reactDOM');
+var common = require('common.js');
+
+
 $(document).ready(function() {
     $(function () {
         $('#webhookPopoverId').popover({
