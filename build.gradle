@@ -4,7 +4,7 @@ version '1.0-SNAPSHOT'
 buildscript {
     ext{
         springBootVersion = '1.4.1.RELEASE'
-        kotlin_version = '1.0.4'
+        kotlin_version = '1.0.5-2'
     }
 
     repositories {
@@ -27,6 +27,8 @@ repositories {
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile('org.springframework.boot:spring-boot-starter-web')
+    testCompile('org.springframework.boot:spring-boot-starter-test')
+    compile('org.jsoup:jsoup:1.9.1')
 }
 
 task wrapper(type: Wrapper) {

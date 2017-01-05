@@ -1,4 +1,4 @@
-package kr.r2lab.myslackalarmbot
+package kr.r2lab
 
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
